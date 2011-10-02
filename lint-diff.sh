@@ -83,25 +83,14 @@ echo "BASEFILE: $BASEFILE"
 echo "COMMAND : $*"
 
 # 指定diff输出的格式，有差异的组，输出起始行号和行数，后面的换行使得输出结果也是一个组的信息一行
-diff --changed-group-format='%dF %dN
-' --unchanged-group-format='' $BASEFILE $SRCFILE > $TMPDIR/diff.txt 2>/dev/null
-
-# awk里面的$1-1表达式会被计算
-awk '{print " line &gt; "  $1-1 " and line &lt; " $1+$2 }' $TMPDIR/diff.txt > $TMPDIR/diff-awk.txt
-
-FILTER="false"
-
-while read LINE 
-do 
-  FILTER+=" or $LINE"
-done < $TMPDIR/diff-awk.txt
+FILTER=`diff --changed-group-format='%dF %dN
+' --unchanged-group-format='' $BASEFILE $SRCFILE | awk '{printf "line &gt; "$1-1" and line &lt; "$1+$2}'`
 
 # 把所有的&替换为\& 
 FILTER=${FILTER//&/\\&}
 
-# 字符串判相等，等号两边需要有空格
-if [ "$FILTER" == "false" ]; then
-  FILTER="*"
+if [ -z "$FILTER" ]; then
+FILTER="*"
 fi
 
 # sed替换
