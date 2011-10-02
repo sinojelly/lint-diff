@@ -1,7 +1,7 @@
 #!/bin/bash
 #Usage: lint-diff-wraper.sh --target target-name -- [lint options] file
 
-source /d/PC-Lint9/lint-diff/envsetup.sh
+source `dirname $0`/envsetup.sh
 
 SRC_FILE=${!#}
 SRC_FILE_FULL=`get_fullpath $SRC_FILE`
