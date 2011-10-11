@@ -74,16 +74,16 @@ fi
 #echo "BASEFILE: $BASEFILE"
 #echo "COMMAND : $*"
 
+if [ ! -e $BASEFILE ]; then
+FILTER="*"
+else
 # output start-line-number lines-count for each diff group
 FILTER=`diff --changed-group-format='%dF %dN
-' --unchanged-group-format='' $BASEFILE $SRCFILE | awk '{printf "line &gt; "$1-1" and line &lt; "$1+$2}'`
+' --unchanged-group-format='' $BASEFILE $SRCFILE | awk 'BEGIN{printf "false"}{printf " or line &gt; "$1-1" and line &lt; "$1+$2}'`
+fi
 
 # replace & to \& 
 FILTER=${FILTER//&/\\&}
-
-if [ -z "$FILTER" ]; then
-FILTER="*"
-fi
 
 sed "s/===line-filter===/$FILTER/g" $LINT_DIFF_DIR/lint-diff.xsl > $TARGET_DIR/$TARGET_FILE.xsl
 
